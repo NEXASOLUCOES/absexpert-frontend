@@ -47,11 +47,11 @@
       input.value = '';
 
       try {
-        const response = await fetch("https://chat.openai.com/g/g-67ede4dd05c08191958aa0df4f40630d-absexpert", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: text })
-        });
+       const response = await fetch("http://191.252.38.137:3000/perguntar", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ pergunta: text })
+});
 
         const data = await response.text();
         appendMessage('ABSExpert', data || '(sem resposta)');
