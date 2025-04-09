@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ABSExpert</title>
+  <style>
+    body { background: #e8dcd0; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .chatbox { max-width: 600px; margin: 50px auto; border-radius: 10px; background: #fff; box-shadow: 0 0 10px #aaa; }
+    .header { background: #004d40; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold; }
+    .messages { padding: 20px; min-height: 300px; }
+    .messages div { margin-bottom: 10px; }
+    .user { font-weight: bold; }
+    .input-box { display: flex; border-top: 1px solid #ccc; }
+    input { flex: 1; padding: 10px; border: none; border-radius: 0 0 0 10px; }
+    button { background: #00695c; color: white; border: none; padding: 10px 20px; border-radius: 0 0 10px 0; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="chatbox">
+    <div class="header">ABSExpert</div>
+    <div class="messages" id="chat">
+      <div><strong>ABSExpert:</strong> Olá! Sou o ABSExpert. Envie sua dúvida e eu responderei de imediato, vamos juntos!</div>
+    </div>
+    <div class="input-box">
+      <input type="text" id="userInput" placeholder="Digite sua pergunta..." />
+      <button onclick="send()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('userInput');
+
+    function appendMessage(sender, text) {
+      const div = document.createElement('div');
+      div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function send() {
+      const text = input.value.trim();
+      if (!text) return;
+      appendMessage('Você', text);
+      input.value = '';
+
+      try {
+        const response = await fetch("https://chat.openai.com/g/g-67ede4dd05c08191958aa0df4f40630d-absexpert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: text })
+        });
+
+        const data = await response.text();
+        appendMessage('ABSExpert', data || '(sem resposta)');
+      } catch (err) {
+        appendMessage('ABSExpert', '(erro ao conectar com o robô)');
+      }
+    }
+
+    input.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") send();
+    });
+  </script>
+</body>
+</html>
